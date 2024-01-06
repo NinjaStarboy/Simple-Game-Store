@@ -187,7 +187,7 @@ class search_game():
             )
             return
 
-        result=db.retrive()
+        result=db.retrive(id)
         if len(result)<1:            
             messagebox.showinfo(
             message=f"The is no game with id: {id}",

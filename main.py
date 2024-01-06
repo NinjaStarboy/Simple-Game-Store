@@ -6,10 +6,10 @@ import mysql.connector as mysql
 class TestDB:
     def __init__(self) -> None:
         pass
-        self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
-        self.cur = self.connect.cursor()
-        self.create_tables()
-        self.cur.execute('USE Steam')
+        # self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
+        # self.cur = self.connect.cursor()
+        # self.create_tables()
+        # self.cur.execute('USE Steam')
 
     def create_tables(self):
         self.cur.execute('CREATE DATABASE IF NOT EXISTS Steam')
@@ -53,7 +53,6 @@ class TestDB:
             self.__init__()
             self.insert()
         self.connect.commit()  
-        self.cur.close()
 
 db=TestDB()
 
@@ -70,17 +69,20 @@ class add_game():
 
         # game id
         game_id_label=Label(self.add_game_frame,text="Game id:")
-        game_id_label.grid(row=0,column=0,padx=10,pady=10)
+        game_id_label.grid(row=0,column=0,padx=30,pady=10,sticky=E)
 
         self.game_id_entry=Entry(self.add_game_frame)
         self.game_id_entry.grid(row=0,column=1,padx=10,pady=10)
 
         # game name
         game_name_label=Label(self.add_game_frame,text="Game Name:")
-        game_name_label.grid(row=1,column=0,padx=10,pady=10)
+        game_name_label.grid(row=1,column=0,padx=30,pady=10,sticky=E)
 
         self.game_name_entry=Entry(self.add_game_frame)
         self.game_name_entry.grid(row=1,column=1,padx=10,pady=10)
+
+        self.game_category_label=Label(self.add_game_frame,text="Game Category:")
+        self.game_category_label.grid(row=2,column=0,padx=30,pady=10,sticky=E)
 
         # game category
         options=["Action","Adventure","RPG","FPS","Battle Royale","Puzzle","Casual","Story","Sports& Racing","Horror","Simulation","Strategy"]
@@ -90,39 +92,40 @@ class add_game():
             state="readonly",
             values=options
         )
+        self.game_category_drop.set("Select a Game Category")
         self.game_category_drop.grid(row=2,column=1,padx=10,pady=10)
 
         # Price
         price_label=Label(self.add_game_frame,text="Price: ")
-        price_label.grid(row=3,column=0,padx=10,pady=10)
+        price_label.grid(row=3,column=0,padx=30,pady=10,sticky=E)
 
         self.price_entry=Entry(self.add_game_frame)
         self.price_entry.grid(row=3,column=1,padx=10,pady=10)
 
         # discount
         discound_label=Label(self.add_game_frame,text="Discount: ")
-        discound_label.grid(row=4,column=0,padx=10,pady=10)
+        discound_label.grid(row=4,column=0,padx=30,pady=10,sticky=E)
 
         self.discount_entry=Entry(self.add_game_frame)
         self.discount_entry.grid(row=4,column=1,padx=10,pady=10)
 
         # Rating
         rating_label=Label(self.add_game_frame,text="Rating : ")
-        rating_label.grid(row=5,column=0,padx=10,pady=10)
+        rating_label.grid(row=5,column=0,padx=30,pady=10,sticky=E)
 
         self.rating_entry=Entry(self.add_game_frame)
         self.rating_entry.grid(row=5,column=1,padx=10,pady=10)
 
         # Friend List
         friend_list_label=Label(self.add_game_frame,text="Friend List : ")
-        friend_list_label.grid(row=6,column=0,padx=10,pady=10)
+        friend_list_label.grid(row=6,column=0,padx=30,pady=10,sticky=E)
 
         self.friend_list_entry=Entry(self.add_game_frame)
         self.friend_list_entry.grid(row=6,column=1,padx=10,pady=10)
 
         # Player Support
         player_support_label=Label(self.add_game_frame,text="Player Support : ")
-        player_support_label.grid(row=7,column=0,padx=10,pady=10)
+        player_support_label.grid(row=7,column=0,padx=30,pady=10,sticky=E)
 
         self.player_support_entry=Entry(self.add_game_frame)
         self.player_support_entry.grid(row=7,column=1,padx=10,pady=10)
@@ -154,7 +157,8 @@ class add_game():
             if isinstance(child,Entry):
                 child.delete(0,END)
         
-        self.game_category_drop.selection_clear()
+        self.game_category_drop.set("Select a Game Category")
+
 
 class search_game():
     def __init__(self) -> None:
@@ -190,7 +194,7 @@ class search_game():
         result=db.retrive(id)
         if len(result)<1:            
             messagebox.showinfo(
-            message=f"The is no game with id: {id}",
+            message=f"There is no game with id: {id}",
             title="Game Not Found"
             )
             

@@ -1,14 +1,15 @@
 from tkinter import *
+from tkinter import ttk,messagebox
 import mysql.connector as mysql
 
 
 class TestDB:
     def __init__(self) -> None:
         pass
-        self.connect = mysql.connect(host='localhost', user='root', passwd='123456789',auth_plugin='mysql_native_password')
-        self.cur = self.connect.cursor()
-        self.create_tables()
-        self.cur.execute('USE Steam')
+        # self.connect = mysql.connect(host='localhost', user='root', passwd='123456789',auth_plugin='mysql_native_password')
+        # self.cur = self.connect.cursor()
+        # self.create_tables()
+        # self.cur.execute('USE Steam')
 
     def create_tables(self):
         self.cur.execute('CREATE DATABASE IF NOT EXISTS Steam')
@@ -27,7 +28,7 @@ class TestDB:
         ''')
 
     def retrive(self,id):
-            self.cur.execute(f"SELECT * FROM Steam WHERE Game_ID = {id}")
+            self.cur.execute(f"SELECT * FROM Games WHERE Game_ID = {id}")
             result=self.cur.fetchall()
             return result
     
@@ -58,9 +59,11 @@ db=TestDB()
 
 class add_game():
     def __init__(self) -> None:
+        main.withdraw()
+        
         self.add_game_frame=Tk()
 
-        self.add_game_frame.title("Add Item")
+        self.add_game_frame.title("Add Game")
         self.add_game_frame.geometry("400x500")
         self.add_game_frame.maxsize(400,500)
         self.add_game_frame.minsize(400, 500)
@@ -82,9 +85,11 @@ class add_game():
         # game category
         options=["Action","Adventure","RPG","FPS","Battle Royale","Puzzle","Casual","Story","Sports& Racing","Horror","Simulation","Strategy"]
 
-        self.clicked=StringVar()
-        self.clicked.set("Select Game Category")
-        self.game_category_drop=OptionMenu(self.add_game_frame,self.clicked,*options)
+        self.game_category_drop= ttk.Combobox(
+            self.add_game_frame,
+            state="readonly",
+            values=options
+        )
         self.game_category_drop.grid(row=2,column=1,padx=10,pady=10)
 
         # Price
@@ -127,15 +132,14 @@ class add_game():
 
         save_button=Button(self.add_game_frame,text="Save",command=lambda: self.insert())
         save_button.grid(row=8,column=1,padx=10,pady=10)
-
-        self.add_game_frame.mainloop()
+        self.add_game_frame.protocol("WM_DELETE_WINDOW", lambda:[main.deiconify(),self.add_game_frame.destroy()])
 
     def insert(self):
 
         data_list=[
             self.game_id_entry.get(),
             self.game_name_entry.get(),
-            self.clicked.get(),
+            self.game_category_drop.get(),
             int(self.price_entry.get()),
             int(self.price_entry.get()) - (int(self.price_entry.get()) * int(self.discount_entry.get()) / 100),
             self.rating_entry.get(),
@@ -152,4 +156,73 @@ class add_game():
         
         self.game_category_drop.selection_clear()
 
-add_game()
+class search_game():
+    def __init__(self) -> None:
+        main.withdraw()
+        
+        self.search_game_frame=Tk()
+
+        self.search_game_frame.title("Game Search")
+        self.search_game_frame.geometry("400x500")
+        self.search_game_frame.maxsize(400, 500)
+        self.search_game_frame.minsize(400, 500)
+
+        game_id_label=Label(self.search_game_frame,text="Search Game by ID",font=(("Arial",18)))
+        game_id_label.grid(row=0,column=0,padx=70,pady=30)
+
+        self.game_id_entry=Entry(self.search_game_frame,font=(("Arial",18)))
+        self.game_id_entry.grid(row=1,column=0,padx=70,pady=10)
+        self.search_game_frame.protocol("WM_DELETE_WINDOW", lambda:[main.deiconify(),self.search_game_frame.destroy()])
+
+        game_search_button=Button(self.search_game_frame,text="Search",command=lambda: self.search())
+        game_search_button.grid(row=2,column=0)
+        
+    def search(self):
+        try:
+            id=int(self.game_id_entry.get())
+        except:
+            messagebox.showinfo(
+            message=f"Please enter a valid Id",
+            title="Invalid Input"
+            )
+            return
+
+        result=db.retrive()
+        if len(result)<1:            
+            messagebox.showinfo(
+            message=f"The is no game with id: {id}",
+            title="Game Not Found"
+            )
+            
+        else:
+            data=result[0]
+            messagebox.showinfo(
+            message=f"Game: {data[0]}\nGame Name:{data[1]}\nGame Category: {data[2]}\nPrice: {data[3]}\nDiscounted Price: {data[4]}\nRating: {data[5]}\nFriend List: {data[6]}\nPlayer Support: {data[7]}\n",
+            title=f"Game Found: {data[1]}"
+            )
+
+
+    def clearentry(self):
+        for child in self.search_game_frame.winfo_children():
+            if isinstance(child,Entry):
+                child.delete(0,END)
+        
+
+main=Tk()
+
+main.title("Deadly Game Store")
+main.geometry("400x500")
+main.maxsize(400,500)
+main.minsize(400, 500)
+
+welcome_label=Label(main,text="Welcome to Deadly Game Store",font=(("Arial",18)))
+welcome_label.grid(row=0,column=0,padx=20,pady=40,columnspan=6)
+
+add_button=Button(main,text="Add Game",command=lambda: add_game())
+add_button.grid(row=1,column=0,padx=75,pady=80)
+
+search_button=Button(main,text="Search Game",command=lambda: search_game())
+search_button.grid(row=1,column=1)
+
+
+main.mainloop()

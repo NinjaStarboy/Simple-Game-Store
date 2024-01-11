@@ -1,12 +1,12 @@
 from tkinter import *
 from tkinter import ttk,messagebox
-import mysql.connector as mysql
 
+import mysql.connector
 
 class TestDB:
     def __init__(self) -> None:
 
-        self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
+        self.connect = mysql.connector.connect(host='localhost', user='root', passwd='smfsql123')
         self.cur = self.connect.cursor()
         self.create_tables()
         self.cur.execute('USE Steam')
@@ -132,11 +132,8 @@ class add_game():
             state="readonly",
             values=options
         )
-        self.player_support_drop.set("Select a Game Category")
+        self.player_support_drop.set("Select Player Support")
         self.player_support_drop.grid(row=7,column=1,padx=10,pady=10)
-
-
-        
 
         clear_button=Button(self.add_game_frame,text="Clear",command=lambda: self.clearentry())
         clear_button.grid(row=8,column=0,padx=10,pady=10)
@@ -147,9 +144,10 @@ class add_game():
 
     def insert(self):
 
-        if not self.already_exist():
-            pass
-
+        
+        if self.already_exist():
+            return
+        
         data_list=[
             int(self.game_id_entry.get()),
             self.game_name_entry.get(),
@@ -174,6 +172,7 @@ class add_game():
             return
 
         result=db.retrive(id)
+        
         if len(result)>0:            
             messagebox.showinfo(
             message=f"There is already a game with id: {id}",

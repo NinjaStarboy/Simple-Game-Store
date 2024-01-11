@@ -6,11 +6,10 @@ import mysql.connector as mysql
 class TestDB:
     def __init__(self) -> None:
 
-        pass
-        # self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
-        # self.cur = self.connect.cursor()
-        # self.create_tables()
-        # self.cur.execute('USE Steam')
+        self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
+        self.cur = self.connect.cursor()
+        self.create_tables()
+        self.cur.execute('USE Steam')
 
     def create_tables(self):
         self.cur.execute('CREATE DATABASE IF NOT EXISTS Steam')
@@ -158,7 +157,7 @@ class add_game():
             self.friend_list_entry.get(),
             self.player_support_drop.get()
             ]
-    
+
         db.insert(data_list=data_list)
 
     def clearentry(self):

@@ -6,7 +6,7 @@ import mysql.connector
 class TestDB:
     def __init__(self) -> None:
 
-        self.connect = mysql.connector.connect(host='localhost', user='root', passwd='smfsql123')
+        self.connect = mysql.connector.connect(host='localhost', user='root', passwd='123456789')
         self.cur = self.connect.cursor()
         self.create_tables()
         self.cur.execute('USE Steam')

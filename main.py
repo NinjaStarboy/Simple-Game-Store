@@ -147,8 +147,11 @@ class add_game():
 
     def insert(self):
 
+        if not self.already_exist():
+            pass
+
         data_list=[
-            self.game_id_entry.get(),
+            int(self.game_id_entry.get()),
             self.game_name_entry.get(),
             self.game_category_drop.get(),
             int(self.price_entry.get()),
@@ -160,6 +163,26 @@ class add_game():
 
         db.insert(data_list=data_list)
 
+    def already_exist(self):
+        try:
+            id=int(self.game_id_entry.get())
+        except:
+            messagebox.showinfo(
+            message=f"Please enter a valid Id",
+            title="Invalid Input"
+            )
+            return
+
+        result=db.retrive(id)
+        if len(result)>0:            
+            messagebox.showinfo(
+            message=f"There is already a game with id: {id}",
+            title="Invalid Game ID"
+            )
+            return True
+        else:
+            return False
+        
     def clearentry(self):
         for child in self.add_game_frame.winfo_children():
             if isinstance(child,Entry):
@@ -213,12 +236,6 @@ class search_game():
             title=f"Game Found: {data[1]}"
             )
 
-
-    def clearentry(self):
-        for child in self.search_game_frame.winfo_children():
-            if isinstance(child,Entry):
-                child.delete(0,END)
-        
 
 main=Tk()
 

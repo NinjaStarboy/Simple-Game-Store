@@ -5,10 +5,12 @@ import mysql.connector as mysql
 
 class TestDB:
     def __init__(self) -> None:
-        self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
-        self.cur = self.connect.cursor()
-        self.create_tables()
-        self.cur.execute('USE Steam')
+
+        pass
+        # self.connect = mysql.connect(host='localhost', user='root', passwd='123456789')
+        # self.cur = self.connect.cursor()
+        # self.create_tables()
+        # self.cur.execute('USE Steam')
 
     def create_tables(self):
         self.cur.execute('CREATE DATABASE IF NOT EXISTS Steam')
@@ -125,9 +127,17 @@ class add_game():
         # Player Support
         player_support_label=Label(self.add_game_frame,text="Player Support : ")
         player_support_label.grid(row=7,column=0,padx=30,pady=10,sticky=E)
+        options=["Singleplayer","Multiplayer","Co-Op","MMO"]
+        self.player_support_drop= ttk.Combobox(
+            self.add_game_frame,
+            state="readonly",
+            values=options
+        )
+        self.player_support_drop.set("Select a Game Category")
+        self.player_support_drop.grid(row=7,column=1,padx=10,pady=10)
 
-        self.player_support_entry=Entry(self.add_game_frame)
-        self.player_support_entry.grid(row=7,column=1,padx=10,pady=10)
+
+        
 
         clear_button=Button(self.add_game_frame,text="Clear",command=lambda: self.clearentry())
         clear_button.grid(row=8,column=0,padx=10,pady=10)
@@ -146,9 +156,9 @@ class add_game():
             int(self.price_entry.get()) - (int(self.price_entry.get()) * int(self.discount_entry.get()) / 100),
             self.rating_entry.get(),
             self.friend_list_entry.get(),
-            self.player_support_entry.get()
+            self.player_support_drop.get()
             ]
-        
+    
         db.insert(data_list=data_list)
 
     def clearentry(self):
@@ -213,13 +223,13 @@ class search_game():
 
 main=Tk()
 
-main.title("Deadly Game Store")
+main.title("Gaming Store")
 main.geometry("400x500")
 main.maxsize(400,500)
 main.minsize(400, 500)
 
-welcome_label=Label(main,text="Welcome to Deadly Game Store",font=(("Arial",18)))
-welcome_label.grid(row=0,column=0,padx=20,pady=40,columnspan=6)
+welcome_label=Label(main,text="Welcome to Gaming Store",font=(("Arial",18)))
+welcome_label.grid(row=0,column=0,padx=52,pady=40,columnspan=6)
 
 add_button=Button(main,text="Add Game",command=lambda: add_game())
 add_button.grid(row=1,column=0,padx=75,pady=80)
